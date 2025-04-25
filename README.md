@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+#  Feedback Collector
 
-## Getting Started
+A minimal, clean, and responsive full-stack micro-application to collect user feedback — built with **Next.js**, **Tailwind CSS**, and **Firebase**.
 
-First, run the development server:
+> Built for a candidate task submission to demonstrate attention to detail, frontend polish, backend integration, and deployment readiness.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+##  Live Demo
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+ [View Live App](https://your-netlify-link.netlify.app) ← _replace this with your link_
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+##  Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend:** Next.js (App Router), Tailwind CSS
+- **Backend:** Firebase Firestore
+- **API:** App Router’s route handlers
+- **Deployment:** Netlify
+- **Extras:** react-hot-toast, dark/light mode, responsive design
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+##  Features
 
-## Deploy on Vercel
+-  Collects full name, email, and feedback message
+-  Dark / light theme toggle via gear icon
+-  Mobile responsive across devices
+-  Timestamp saved for each submission
+-  Admin view with toggle to show submitted feedback
+-  Form validation with user-friendly messages
+-  Toast notifications after submit
+-  Navigation between Home/Admin using user icon
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+##  Project Structure
+
+- /page.js → Home page with FeedbackForm
+- /app /admin/page.js → Admin page with feedback list 
+- /api /submit-feedback/ → POST route for submitting 
+- /feedback/ → GET route to retrieve feedback 
+- /layout.js → Global layout with footer, Toaster 
+- /page.js → Home page with FeedbackForm
+- /components FeedbackForm.js → Form with validation, loading, toast 
+    FeedbackList.js → Display feedback in admin view 
+    topNav.js → Header with theme + route toggles
+- /lib firebase.js → Firebase setup and export
