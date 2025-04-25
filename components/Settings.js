@@ -9,7 +9,6 @@ export default function ThemeSettings() {
   const [enabled, setEnabled] = useState(true);
   const panelRef = useRef();
 
-  // Toggle dark mode class on <html>
   useEffect(() => {
     const root = document.documentElement;
     if (enabled) {
@@ -19,7 +18,6 @@ export default function ThemeSettings() {
     }
   }, [enabled]);
 
-  // Close settings when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (panelRef.current && !panelRef.current.contains(event.target)) {
@@ -33,21 +31,21 @@ export default function ThemeSettings() {
   }, []);
 
   return (
-    <div className="fixed top-4 right-4 z-50">
+    <div className="relative">
       {/* Gear Icon Button */}
       <button
         onClick={() => setOpen(!open)}
-        className="text-white bg-green-700 p-2 rounded-full shadow-md hover:bg-green-800 transition"
+        className="text-blue-500 hover:text-blue-600 text-2xl"
         title="Settings"
       >
-        <FaCog className="hover:animate-spin transition-transform duration-300" />
+        <FaCog className="hover:animate-wiggle transition-transform duration-300" />
       </button>
 
       {/* Settings Panel */}
-      {open && (
+      {open && ( 
         <div
           ref={panelRef}
-          className="mt-2 w-64 bg-gray-800 text-white p-4 rounded-lg shadow-xl transition-all duration-300 ease-in-out"
+          className="absolute right-0 mt-2 w-64 bg-gray-800 text-white p-4 rounded-lg shadow-xl transition-all duration-300 ease-in-out z-50"
         >
           <h3 className="font-bold mb-2">Settings</h3>
           <div className="flex items-center justify-between">
@@ -56,7 +54,7 @@ export default function ThemeSettings() {
               checked={enabled}
               onChange={setEnabled}
               className={`${
-                enabled ? 'bg-green-700' : 'bg-gray-400'
+                enabled ? 'bg-blue-600' : 'bg-blue-200'
               } relative inline-flex h-6 w-11 items-center rounded-full transition`}
             >
               <span

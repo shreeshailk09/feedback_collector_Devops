@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { toast } from 'react-hot-toast';
 
 export default function FeedbackForm() {
   const [formData, setFormData] = useState({
@@ -8,15 +9,33 @@ export default function FeedbackForm() {
     email: '',
     message: '',
   });
+
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  const validate = () => {
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = 'Name is required';
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = 'Enter a valid email';
+    }
+    if (!formData.message.trim()) newErrors.message = 'Feedback is required';
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    setErrors({ ...errors, [e.target.name]: '' });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
+
     setLoading(true);
     setSubmitted(false);
 
@@ -30,53 +49,60 @@ export default function FeedbackForm() {
     if (res.ok) {
       setSubmitted(true);
       setFormData({ name: '', email: '', message: '' });
+      toast.success('Feedback submitted !');
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 max-w-md">
+    <form onSubmit={handleSubmit} className="space-y-6 max-w-md w-full mx-auto bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
       <div>
-        <label className="block text-sm font-medium">Full Name</label>
+        <label className="block text-sm font-medium mb-1">Full Name</label>
         <input
           name="name"
           type="text"
-          required
           value={formData.name}
           onChange={handleChange}
-          className="mt-1 block w-full p-2 border rounded bg-white text-black"
+          className="block w-full p-2 border border-gray-300 rounded bg-white text-black dark:bg-gray-700 dark:text-white"
         />
+        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
       </div>
+
       <div>
-        <label className="block text-sm font-medium">Email</label>
+        <label className="block text-sm font-medium mb-1">Email</label>
         <input
           name="email"
           type="email"
-          required
           value={formData.email}
           onChange={handleChange}
-          className="mt-1 block w-full p-2 border rounded bg-white text-black"
+          className="block w-full p-2 border border-gray-300 rounded bg-white text-black dark:bg-gray-700 dark:text-white"
         />
+        {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
       </div>
+
       <div>
-        <label className="block text-sm font-medium">Feedback Message</label>
+        <label className="block text-sm font-medium mb-1">Feedback Message</label>
         <textarea
           name="message"
-          required
+          rows="4"
           value={formData.message}
           onChange={handleChange}
-          className="mt-1 block w-full p-2 border rounded bg-white text-black"
-          rows="4"
+          className="block w-full p-2 border border-gray-300 rounded bg-white text-black dark:bg-gray-700 dark:text-white"
         />
+        {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
       </div>
+
       <button
         type="submit"
-        className="bg-green-700 hover:bg-green-900 text-white px-4 py-2 rounded"
+        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-4 py-2 rounded w-full transition-colors duration-200"
         disabled={loading}
       >
-        {loading ? 'Submitting...' : 'Submit'}
+        {loading ? 'Submitting...' : 'Submit Feedback'}
       </button>
+
       {submitted && (
-        <p className="text-green-600 font-medium">Feedback submitted successfully!</p>
+        <p className="text-green-600 font-medium text-center mt-2">
+          Feedback submitted successfully!
+        </p>
       )}
     </form>
   );
