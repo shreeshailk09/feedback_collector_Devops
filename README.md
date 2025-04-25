@@ -8,7 +8,7 @@ A minimal, clean, and responsive full-stack micro-application to collect user fe
 
 ##  Live Demo
 
- [View Live App](https://your-netlify-link.netlify.app) ← _replace this with your link_
+ [View Live App](https://sparkling-sundae-b2a228.netlify.app) 
 
 ---
 
@@ -37,13 +37,37 @@ A minimal, clean, and responsive full-stack micro-application to collect user fe
 
 ##  Project Structure
 
-- /page.js → Home page with FeedbackForm
-- /app /admin/page.js → Admin page with feedback list 
-- /api /submit-feedback/ → POST route for submitting 
-- /feedback/ → GET route to retrieve feedback 
+- /page.js -> Home page with FeedbackForm
+- /app /admin/page.js -> Admin page with feedback list 
+- /api /submit-feedback/ -> POST route for submitting 
+- /feedback/ -> GET route to retrieve feedback 
 - /layout.js → Global layout with footer, Toaster 
 - /page.js → Home page with FeedbackForm
 - /components FeedbackForm.js → Form with validation, loading, toast 
     FeedbackList.js → Display feedback in admin view 
     topNav.js → Header with theme + route toggles
 - /lib firebase.js → Firebase setup and export
+
+---
+
+## Deployment (Netlify)
+This project is deployed using Netlify.
+
+ **Steps to Deploy**
+- Push code to GitHub
+
+Go to Netlify Dashboard
+- Click “Add New Site” -> “Import an existing project”
+
+Connect GitHub repo
+- Choose the repository containing this project
+
+Set Build Settings:
+
+Build command: npm run build
+
+Publish directory: .next
+
+Add Firebase environment variables:
+
+Go to: Site Settings -> Environment Variables
