@@ -1,39 +1,23 @@
-# =====================
-# Stage 1: Dependencies & Build
-# =====================
-FROM node:18-alpine AS builder
+# Step 1: Use a stable base image
+FROM node:18-slim
 
-# Set working directory
+# Step 2: Set working directory
 WORKDIR /app
 
-# Install build tools for native modules if needed (optional but safe)
-RUN apk add --no-cache python3 make g++
-
-# Copy only package files to leverage Docker cache
+# Step 3: Install dependencies first for Docker caching
 COPY package*.json ./
 
-# Install dependencies (this layer will be cached unless package files change)
-RUN npm install
+# Optional: faster, cleaner install if you have package-lock.json
+RUN npm ci --no-optional --prefer-offline --verbose
 
-# Copy full source
+# Step 4: Copy the rest of the application
 COPY . .
 
-# Build the Next.js app
+# Step 5: Build the Next.js app
 RUN npm run build
 
-# =====================
-# Stage 2: Runtime
-# =====================
-FROM node:18-alpine
-
-WORKDIR /app
-
-# Copy only what's needed to run the app
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
+# Step 6: Expose the app port
 EXPOSE 3000
 
+# Step 7: Start the app
 CMD ["npm", "start"]
