@@ -1,21 +1,35 @@
-# Step 1: Use Node image
-FROM node:18-alpine
+# ---------- Stage 1: Install and Build ----------
+FROM node:18-alpine AS builder
 
-# Step 2: Set working directory
+# Set working directory
 WORKDIR /app
 
-# Step 3: Copy dependencies files and install
+# Install dependencies first (separate layer for cache)
 COPY package*.json ./
 RUN npm install
 
-# Step 4: Copy rest of the code
+# Copy rest of the source code
 COPY . .
 
-# Step 5: Build the Next.js app
+# Build the app
 RUN npm run build
 
-# Step 6: Expose the app port
+# ---------- Stage 2: Run Production ----------
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Only copy necessary files from the builder
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/next.config.js ./
+
+
+# Expose app port
 EXPOSE 3000
 
-# Step 7: Start the app
+# Start the app
 CMD ["npm", "start"]
