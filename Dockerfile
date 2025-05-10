@@ -1,23 +1,23 @@
-# Step 1: Use a stable base image
-FROM node:18-slim
+# Use an official Node.js runtime as the base image
+FROM node:18-alpine
 
-# Step 2: Set working directory
+# Set the working directory inside the container
 WORKDIR /app
 
-# Step 3: Install dependencies first for Docker caching
+# Copy package.json and package-lock.json first to utilize Docker cache
 COPY package*.json ./
 
-# Optional: faster, cleaner install if you have package-lock.json
-RUN npm ci --no-optional --prefer-offline --verbose
+# Install npm dependencies (this layer will be cached unless package*.json changes)
+RUN npm ci --prefer-offline --no-audit --production
 
-# Step 4: Copy the rest of the application
+# Now, copy the rest of the application code
 COPY . .
 
-# Step 5: Build the Next.js app
+# Build your application (only if needed, if you're running a build step like with Next.js)
 RUN npm run build
 
-# Step 6: Expose the app port
+# Expose the port your app will be running on
 EXPOSE 3000
 
-# Step 7: Start the app
+# Start the application
 CMD ["npm", "start"]
