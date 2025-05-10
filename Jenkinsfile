@@ -4,7 +4,18 @@ pipeline {
     environment {
         DOCKER_IMAGE = "nextjs-app"
         EC2_INSTANCE_IP = "3.110.103.184"
-        SSH_CREDENTIALS_ID = "ec2-ssh-key"  // Use the ID you set when uploading the key
+        SSH_CREDENTIALS_ID = "ec2-ssh-key" 
+         agent any
+   
+      
+        FIREBASE_API_KEY = credentials('FIREBASE_API_KEY')
+        FIREBASE_AUTH_DOMAIN = credentials('FIREBASE_AUTH_DOMAIN')
+        FIREBASE_PROJECT_ID = credentials('FIREBASE_PROJECT_ID')
+        FIREBASE_STORAGE_BUCKET = credentials('FIREBASE_STORAGE_BUCKET')
+        FIREBASE_MESSAGING_SENDER_ID = credentials('FIREBASE_MESSAGING_SENDER_ID')
+        FIREBASE_APP_ID = credentials('FIREBASE_APP_ID')
+        FIREBASE_MEASUREMENT_ID = credentials('FIREBASE_MEASUREMENT_ID')
+    
     }
 
     stages {
