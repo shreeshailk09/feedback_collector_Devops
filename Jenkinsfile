@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "nextjs-app"
-        EC2_INSTANCE_IP = "<your-ec2-ip>"
+        EC2_INSTANCE_IP = "3.110.103.184"
         SSH_CREDENTIALS_ID = "ec2-ssh-key"  // Use the ID you set when uploading the key
     }
 
