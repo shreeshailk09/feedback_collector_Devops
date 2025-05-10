@@ -1,5 +1,5 @@
 # Step 1: Build the app
-FROM node:16 AS builder
+FROM node:18 AS builder
 
 WORKDIR /app
 
@@ -14,7 +14,7 @@ COPY . .
 RUN npm run build
 
 # Step 2: Serve the app
-FROM node:16
+FROM node:18
 
 WORKDIR /app
 
