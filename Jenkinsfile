@@ -18,7 +18,7 @@ pipeline {
             steps {
                 script {
                     // This step fetches the .env.local file from Jenkins' Config File Management
-                    configFileProvider([configFile(fileId: '0ed26678-a0d7-4f76-afdb-75435d534b7a	', variable: 'ENV_FILE')]) {
+                    configFileProvider([configFile(fileId: '0ed26678-a0d7-4f76-afdb-75435d534b7a', variable: 'ENV_FILE')]) {
                         // Ensure the file is copied to the workspace
                         sh 'cp $ENV_FILE ./.env.local'
                     }
