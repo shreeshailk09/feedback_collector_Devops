@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json package-lock.json ./
-RUN npm install
+RUN npm install --legacy-peer-deps --verbose
 
 # Copy the app files
 COPY . .
@@ -22,7 +22,7 @@ WORKDIR /app
 COPY --from=builder /app ./
 
 # Install only production dependencies
-RUN npm install --production
+RUN npm prune --production
 
 
 # Start the app

@@ -34,7 +34,7 @@ pipeline {
                     echo "Building Docker image..."
 
                     // Build Docker image using the .env.local credentials
-                    sh 'docker build -t $DOCKER_IMAGE .'  // Build Docker image
+                    sh 'docker build --progress=plain -t $DOCKER_IMAGE .'  // Build Docker image
                 }
             }
         }
