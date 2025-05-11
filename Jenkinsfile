@@ -21,6 +21,8 @@ pipeline {
                     configFileProvider([configFile(fileId: '0ed26678-a0d7-4f76-afdb-75435d534b7a', variable: 'ENV_FILE')]) {
                         // Ensure the file is copied to the workspace
                         sh 'cp $ENV_FILE ./.env.local'
+                        sh 'ls -la .env.local || echo "Missing .env.local!"'
+
                     }
                 }
             }

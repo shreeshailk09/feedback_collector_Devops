@@ -23,7 +23,7 @@ COPY --from=builder /app ./
 
 # Install only production dependencies
 RUN npm install --production
-COPY .env.local .env.local
+
 
 # Start the app
 CMD ["npm", "run", "start"]
