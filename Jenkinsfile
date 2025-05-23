@@ -9,14 +9,21 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        echo "Checking out repo..."
         git 'https://github.com/shreeshailk09/feedback_collector_Devops.git'
+      }
+    }
+
+    stage('Prepare env file') {
+      steps {
+        withCredentials([file(credentialsId: 'firebase-env', variable: 'ENV_LOCAL')]) {
+          // Copy the secret env file to workspace as .env.local
+          sh 'cp $ENV_LOCAL .env.local'
+        }
       }
     }
 
     stage('Build Docker Image') {
       steps {
-        echo "Building Docker image..."
         script {
           docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
         }
@@ -25,9 +32,8 @@ pipeline {
 
     stage('Push Docker Image') {
       steps {
-        echo "Pushing Docker image to Docker Hub..."
         script {
-          docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials.') {
+          docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials') {
             docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
           }
         }
@@ -36,7 +42,6 @@ pipeline {
 
     stage('Deploy to Kubernetes') {
       steps {
-        echo "Deploying to Kubernetes..."
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
           sh '''
             kubectl --kubeconfig=$KUBECONFIG apply -f k8s/deployment.yaml
