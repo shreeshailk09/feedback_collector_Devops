@@ -1,31 +1,22 @@
-# Step 1: Build the app
-FROM node:18 AS builder
-
+FROM node:18-alpine AS builder
 WORKDIR /app
 
-# Install dependencies
-COPY package.json package-lock.json ./
-RUN npm install --legacy-peer-deps --verbose
+# Copy dependencies
+COPY package*.json ./
+RUN npm install
 
-# Copy the app files
+# Copy app source
 COPY . .
 
-# Build the app
+# Copy env file for Firestore
+COPY .env.local .env
+
+# Build Next.js app
 RUN npm run build
 
-# Step 2: Serve the app
-FROM node:18
-
+# Final image
+FROM node:18-alpine
 WORKDIR /app
-
-# Copy build output from the builder stage
 COPY --from=builder /app ./
-
-# Install only production dependencies
-RUN npm prune --production
-
-
-# Start the app
-CMD ["npm", "run", "start"]
-
 EXPOSE 3000
+CMD ["npm", "start"]

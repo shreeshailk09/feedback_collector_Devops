@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nextjs-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nextjs
+  template:
+    metadata:
+      labels:
+        app: nextjs
+    spec:
+      containers:
+      - name: nextjs
+        image: shreeshailk09/my-next-app:latest
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: nextjs-env
+      imagePullSecrets:
+      - name: regcred

@@ -1,68 +1,58 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        DOCKER_IMAGE = "nextjs-app"
-        EC2_INSTANCE_IP = "3.111.255.131"
-        SSH_CREDENTIALS_ID = "ec2-ssh-key"
+  environment {
+    DOCKER_IMAGE = "shreeshailk09/my-next-app"
+    DOCKER_TAG = "latest"
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        echo "Checking out repo..."
+        git 'https://github.com/shreeshailk09/feedback_collector_Devops.git'
+      }
     }
 
-    stages {
-        stage('Checkout') {
-            steps {
-                checkout scm
-            }
+    stage('Build Docker Image') {
+      steps {
+        echo "Building Docker image..."
+        script {
+          docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
         }
-
-        stage('Retrieve .env.local') {
-            steps {
-                script {
-                    // This step fetches the .env.local file from Jenkins' Config File Management
-                    configFileProvider([configFile(fileId: '0ed26678-a0d7-4f76-afdb-75435d534b7a', variable: 'ENV_FILE')]) {
-                        // Ensure the file is copied to the workspace
-                        sh 'cp $ENV_FILE ./.env.local'
-                        sh 'ls -la .env.local || echo "Missing .env.local!"'
-
-                    }
-                }
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    echo "Building Docker image..."
-
-                    // Build Docker image using the .env.local credentials
-                    sh 'docker build --progress=plain -t $DOCKER_IMAGE .'  // Build Docker image
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                script {
-                    echo "Pushing Docker image to Docker Hub..."
-                    sh 'docker push $DOCKER_IMAGE'
-                }
-            }
-        }
-
-        stage('Deploy to EC2') {
-            steps {
-                script {
-                    echo "Deploying to EC2 instance..."
-
-                    withCredentials([sshUserPrivateKey(credentialsId: "$SSH_CREDENTIALS_ID", keyFileVariable: 'SSH_KEY')]) {
-                        sh '''
-                            ssh -o StrictHostKeyChecking=no -i $SSH_KEY ubuntu@$EC2_INSTANCE_IP << 'EOF'
-                            docker pull $DOCKER_IMAGE  # Pull the Docker image from registry
-                            docker run -d -p 80:3000 $DOCKER_IMAGE  # Run Docker container
-                            EOF
-                        '''
-                    }
-                }
-            }
-        }
+      }
     }
+
+    stage('Push Docker Image') {
+      steps {
+        echo "Pushing Docker image to Docker Hub..."
+        script {
+          docker.withRegistry('https://registry.hub.docker.com', 'dockerhub-credentials.') {
+            docker.image("${DOCKER_IMAGE}:${DOCKER_TAG}").push()
+          }
+        }
+      }
+    }
+
+    stage('Deploy to Kubernetes') {
+      steps {
+        echo "Deploying to Kubernetes..."
+        withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+          sh '''
+            kubectl --kubeconfig=$KUBECONFIG apply -f k8s/deployment.yaml
+            kubectl --kubeconfig=$KUBECONFIG apply -f k8s/service.yaml
+          '''
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo "Deployment successful! 🎉"
+    }
+    failure {
+      echo "Deployment failed. Check logs."
+    }
+  }
 }
