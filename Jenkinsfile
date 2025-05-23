@@ -16,8 +16,8 @@ pipeline {
     stage('Prepare env file') {
       steps {
         withCredentials([file(credentialsId: 'firebase-env', variable: 'ENV_LOCAL')]) {
-          // Copy the secret env file to workspace as .env.local
-          sh 'cp $ENV_LOCAL .env.local'
+          // Copy the secret env file to workspace as .env.local using Windows copy command
+          bat 'copy /Y "%ENV_LOCAL%" ".env.local"'
         }
       }
     }
@@ -43,10 +43,11 @@ pipeline {
     stage('Deploy to Kubernetes') {
       steps {
         withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-          sh '''
-            kubectl --kubeconfig=$KUBECONFIG apply -f k8s/deployment.yaml
-            kubectl --kubeconfig=$KUBECONFIG apply -f k8s/service.yaml
-          '''
+          // Use Windows batch commands for kubectl
+          bat """
+            kubectl --kubeconfig="%KUBECONFIG%" apply -f k8s\\deployment.yaml
+            kubectl --kubeconfig="%KUBECONFIG%" apply -f k8s\\service.yaml
+          """
         }
       }
     }
